@@ -4,6 +4,8 @@ const PostSchema = new mongoose.Schema({
   username: String,
   time: String,
   message: String,
+  likes: Number,
+  hearts: Number
 });
 
 const Post = mongoose.model("Post", PostSchema);
