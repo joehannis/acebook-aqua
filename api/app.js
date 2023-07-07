@@ -26,6 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // middleware function to check for valid tokens
 const tokenChecker = (req, res, next) => {
+  console.log(req.body);
   let token;
   const authHeader = req.get("Authorization");
 
