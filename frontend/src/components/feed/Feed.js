@@ -35,8 +35,6 @@ const Feed = ({ navigate }) => {
     });
   };
 
-  
-
   if (token) {
     return (
       <>
