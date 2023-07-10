@@ -13,7 +13,7 @@ const defaultImage = {
   contentType: "image/png", // Adjust the content type based on your default image format
 };
 
-const saltRounds = 10;  // Number of salt rounds for bcrypt hashing
+const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
 const UsersController = {
   Create: (req, res) => {
@@ -26,16 +26,17 @@ const UsersController = {
       }
 
       const user = new User({
-        email: req.body.email,
-        password: hashedPassword,
-        username: req.body.username,
+        email: email,
+        password: hashedPassword, // Store the hashed password
+        username: username,
         image: defaultImage,
       });
+
       user.save((err) => {
         if (err) {
-          res.status(400).json({ message: "Bad request" });
+          return res.status(400).json({ message: "Bad request" });
         } else {
-          res.status(201).json({ message: "OK" });
+          return res.status(201).json({ message: "OK" });
         }
       });
     });
