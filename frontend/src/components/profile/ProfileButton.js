@@ -1,9 +1,13 @@
-// ProfileButton.jsx
+import { Link } from "react-router-dom";
 import React from "react";
 // import './ProfileButton.css';
 
-const ProfileButton = () => {
-  return <button className="profile-button">Profile</button>;
+const ProfileButton = ({ userId }) => {
+  return (
+    <Link to={`/profile/${userId}`}>
+      <button className="profile-button">Profile</button>
+    </Link>
+  );
 };
 
 export default ProfileButton;
