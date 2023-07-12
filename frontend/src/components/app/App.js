@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,6 +17,8 @@ import ProfileButton from "../profile/ProfileButton";
 import Profile from "../profile/ProfilePage";
 import FeedButton from "../feed/FeedButton";
 import jwt_decode from "jwt-decode";
+import SearchResults from "../searchbar/SearchResults";
+ // Add this line
 
 import "./App.css";
 
@@ -27,7 +29,8 @@ const App = () => {
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null);
-
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = () => setShowLoginForm(true); // Renamed to handleLogin
@@ -38,6 +41,21 @@ const App = () => {
   const handleSuccessfulLogin = () => {
     setIsUserLoggedIn(true);
     // ...other stuff, like closing the modal
+  };
+
+  const handleSearch = (query) => {
+    setIsSearching(true);
+
+    fetch(`/search?query=${query}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+        setIsSearching(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setIsSearching(false);
+      });
   };
 
   useEffect(() => {
@@ -74,29 +92,43 @@ const App = () => {
           </div>
 
           <div className="feed-container">
-            <SearchBar />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  isUserLoggedIn ? (
-                    <Feed navigate={navigate} />
-                  ) : (
-                    <div>Please log in to see the feed.</div>
-                  )
-                }
-              />
-              <Route
-                path="/profiles/:id"
-                element={
-                  isUserLoggedIn ? (
-                    <Profile userId={userId} />
-                  ) : (
-                    <div>Please log in to see the profile.</div>
-                  )
-                }
-              />
-            </Routes>
+            <SearchBar onSearch={handleSearch} />
+            {isSearching ? (
+            <div>Loading search results...</div>
+            ) : (
+            <SearchResults users={searchResults.users} posts={searchResults.posts} />
+            )}
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    isUserLoggedIn ? (
+                      <Feed navigate={navigate} />
+                    ) : (
+                      <div>Please log in to see the feed.</div>
+                    )
+                  }
+                />
+                <Route
+                  path="/profiles/:id"
+                  element={
+                    isUserLoggedIn ? (
+                      <Profile userId={userId} />
+                    ) : (
+                      <div>Please log in to see the profile.</div>
+                    )
+                  }
+                />
+              </Routes>
+            {!isSearching && (
+              <div className="search-results">
+                <h2>Search Results</h2>
+                <SearchResults
+                  users={searchResults.users}
+                  posts={searchResults.posts}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
