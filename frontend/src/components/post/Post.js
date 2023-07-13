@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import CommentForm from "../comment/CommentForm";
 import Comment from "../comment/Comment";
 
+// grab userId from props so it can be used in liking / unliking
 const Post = ({
+  userId,
   post,
   token,
-  onUpdatedLikes,
   handleNewComment,
   comments,
   handleUpdatedCommentLikes,
@@ -13,13 +14,18 @@ const Post = ({
   const [imgSrc, setImgSrc] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
   const [authorImgSrc, setAuthorImgSrc] = useState(null);
+  // use react's built-in state management for likes
+  const [likes, setLikes] = useState(post.likes)
 
   const handleZoom = () => {
     setIsZoomed(true);
   };
 
-  const handlePostLike = async () => {
+  const handlePostLike = async (e) => {
+    e.preventDefault()
+    
     console.log("handleLike is triggered");
+    
     const response = await fetch(`/posts/${post._id}/like`, {
       method: "PUT",
       headers: {
@@ -27,8 +33,18 @@ const Post = ({
       },
     });
     const data = await response.json();
-    if (onUpdatedLikes) {
-      onUpdatedLikes(post._id, data.likes);
+    if(!likes.includes(userId)) {
+      // if the post has not already been liked by the current user
+      // add a like (their id)
+      setLikes([...likes, userId])
+    } else {
+      // else if it has already been liked by the current user
+      // remove a like (their id)
+      // unfortunately JS doesn't have a neat way of removing things from arrays :)
+      let index = likes.indexOf(userId)
+      let likesCopy = [...likes]
+      likesCopy.splice(index, 1)
+      setLikes(likesCopy)
     }
   };
 
@@ -77,7 +93,7 @@ const Post = ({
           {"👍"}
         </span>
       </button>
-      <div>{post.likes ? post.likes.length : 0} likes</div>
+      <div>{ likes.length } likes</div>
 
       <div
         className="post-container"

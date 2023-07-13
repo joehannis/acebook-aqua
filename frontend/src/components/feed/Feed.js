@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Post from "../post/Post";
 import PostForm from "../post/PostForm";
 
-const Feed = ({ navigate, searchTerm }) => {
+// grab userId from props
+const Feed = ({ navigate, searchTerm, userId}) => {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
   const [token, setToken] = useState(window.localStorage.getItem("token"));
@@ -92,8 +93,10 @@ const Feed = ({ navigate, searchTerm }) => {
                 post.message.toLowerCase().includes(searchTerm.toLowerCase())
               ) // Add filtering based on searchTerm here
               .map((post) => (
+                // again, pass down userId
                 <div key={post._id} className="post-container">
                   <Post
+                    userId={userId}
                     post={post}
                     token={token}
                     setToken={setToken}

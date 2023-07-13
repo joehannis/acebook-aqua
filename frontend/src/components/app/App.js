@@ -92,7 +92,8 @@ const App = () => {
                 path="/"
                 element={
                   isUserLoggedIn ? (
-                    <Feed navigate={navigate} searchTerm={searchTerm} />
+                    // pass in userId so it can be used in Post
+                    <Feed navigate={navigate} searchTerm={searchTerm} userId={userId}/>
                   ) : (
                     <div>Please log in to see the feed.</div>
                   )
